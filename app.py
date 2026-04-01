@@ -7,8 +7,6 @@ import json
 # --- CONFIGURATION ---
 # We use official RSS feeds to gather news for free
 RSS_FEEDS = [
-    "https://openai.com/news/rss.xml",
-    "https://blog.google/technology/ai/rss/",
     "https://techcrunch.com/category/artificial-intelligence/feed/"
 ]
 
@@ -56,17 +54,17 @@ if st.button("Fetch Latest News"):
             all_news_text += f"Title: {entry.title}\nContent: {entry.summary if 'summary' in entry else entry.title}\n---\n"
 
     # 2. Send ONE single request to Gemini for everything
-   for entry in feed.entries[:2]:
+   for entry in feed.entries[:4]:
     with st.container():
         st.markdown(f"### [{entry.title}]({entry.link})")
 
         # This tiny pause prevents the "Quota Exceeded" error!
-        time.sleep(2) 
+        time.sleep(4) 
 
         with st.spinner("AI is generating summary..."):
             # ... your existing summary code ...
     with st.spinner("AI is summarizing the entire feed..."):
-        combined_summary = get_ai_summary(f"Here is a list of news. Provide a 2-bullet point summary for EACH individual story separately:\n\n{all_news_text}")
+        combined_summary = get_ai_summary(f"Here is a list of news. Provide a short summary for EACH individual story separately:\n\n{all_news_text}")
     
     # 3. Display the big summary
     st.markdown("### 📰 Today's AI Briefing")
