@@ -26,8 +26,8 @@ def get_ai_summary(text):
                 "X-Title": "AI News Dashboard"
             },
             data=json.dumps({
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
-                "messages": [{"role": "user", "content": f"Summarize this AI news update in 2 short bullet points:\n\n{text}"}]
+                "model": "google/gemma-2-9b-it:free",
+                "messages": [{"role": "user", "content": f"Summarize this AI news update in 3 short bullet points:\n\n{text}"}]
             })
         )
         
