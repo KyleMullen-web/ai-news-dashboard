@@ -27,7 +27,7 @@ def get_ai_summary(text):
             },
             data=json.dumps({
                "model": "openrouter/free",
-                "messages": [{"role": "user", "content": f"Summarize this AI news update in 3 short bullet points:\n\n{text}"}]
+                "messages": [{"role": "user", "content": f"Summarize this AI news update in a short summary:\n\n{text}"}]
             })
         )
         
