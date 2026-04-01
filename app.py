@@ -26,7 +26,7 @@ def get_ai_summary(text):
                 "X-Title": "AI News Dashboard"
             },
             data=json.dumps({
-                "model": "google/gemma-2-9b-it:free",
+               "model": "openrouter/free",
                 "messages": [{"role": "user", "content": f"Summarize this AI news update in 3 short bullet points:\n\n{text}"}]
             })
         )
