@@ -12,32 +12,28 @@ RSS_FEEDS = [
 ]
 
 # The API key will be securely stored in Streamlit Cloud secrets
-OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"] 
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"] 
 
-@st.cache_data(ttl=3600) # Caches the data for 1 hour so you don't overuse the free AI API
+@st.cache_data(ttl=3600)
 def get_ai_summary(text):
-    """Sends the article to a free AI model for a bulleted summary."""
+    """Sends the article directly to Google's Gemini API for a summary."""
     try:
-        response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "HTTP-Referer": "https://ai-news-dashboard.streamlit.app", # Tells OpenRouter who you are
-                "X-Title": "AI News Dashboard"
-            },
-            data=json.dumps({
-               "model": "openrouter/free",
-                "messages": [{"role": "user", "content": f"Summarize this AI news update in a short summary:\n\n{text}"}]
-            })
-        )
+        # We are using Gemini 2.0 Flash, which is incredibly fast and free in AI Studio
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
         
+        payload = {
+            "contents": [{"parts": [{"text": f"Summarize this AI news update in a short summary:\n\n{text}"}]}]
+        }
+        
+        response = requests.post(url, headers={"Content-Type": "application/json"}, json=payload)
         response_data = response.json()
         
-        # If there's an error from OpenRouter, this will catch it and show it to you!
+        # Catch any Google-specific errors
         if "error" in response_data:
-            return f"API Error: {response_data['error']['message']}"
+            return f"Google API Error: {response_data['error']['message']}"
             
-        return response_data['choices'][0]['message']['content']
+        # Extract the text from Google's specific response format
+        return response_data['candidates'][0]['content']['parts'][0]['text']
         
     except Exception as e:
         return f"System Error: {str(e)}"
