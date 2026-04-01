@@ -20,15 +20,27 @@ def get_ai_summary(text):
     try:
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "HTTP-Referer": "https://ai-news-dashboard.streamlit.app", # Tells OpenRouter who you are
+                "X-Title": "AI News Dashboard"
+            },
             data=json.dumps({
                 "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": [{"role": "user", "content": f"Summarize this AI news update in 2 short bullet points:\n\n{text}"}]
             })
         )
-        return response.json()['choices'][0]['message']['content']
-    except Exception:
-        return "Summary currently unavailable."
+        
+        response_data = response.json()
+        
+        # If there's an error from OpenRouter, this will catch it and show it to you!
+        if "error" in response_data:
+            return f"API Error: {response_data['error']['message']}"
+            
+        return response_data['choices'][0]['message']['content']
+        
+    except Exception as e:
+        return f"System Error: {str(e)}"
 
 # --- USER INTERFACE ---
 st.set_page_config(page_title="AI Pulse", page_icon="🤖", layout="centered")
