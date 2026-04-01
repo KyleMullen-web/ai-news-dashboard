@@ -56,7 +56,7 @@ if st.button("Fetch Latest News"):
         feed = feedparser.parse(url)
         all_news_bundle += f"\n--- SOURCE: {feed.feed.title} ---\n"
         
-        for entry in feed.entries[:3]:
+        for entry in feed.entries[:1]:
             content = entry.summary if 'summary' in entry else entry.title
             all_news_bundle += f"TITLE: {entry.title}\nTEXT: {content}\n\n"
             source_links.append({"title": entry.title, "link": entry.link})
@@ -64,7 +64,7 @@ if st.button("Fetch Latest News"):
     # 2. Send ONE single request for everything
     with st.spinner("Gemini is summarizing all news at once..."):
         # We ask Gemini to keep the formatting clear
-        prompt = f"Summarize each of these AI news stories. For each story, give me the title followed by 2 bullet points. Keep it professional:\n\n{all_news_bundle}"
+        prompt = f"Summarize each of these AI news stories. For each story, give me the title followed by a short summary. Keep it professional:\n\n{all_news_bundle}"
         full_report = get_ai_summary(prompt)
         
         # Display the big report
