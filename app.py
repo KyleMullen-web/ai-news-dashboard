@@ -48,25 +48,34 @@ st.write("Fetching and summarizing the latest in Artificial Intelligence...")
 
 # The "Fetch" Button logic
 if st.button("Fetch Latest News"):
+    all_news_bundle = ""
+    source_links = []
+
+    # 1. Gather all the news into one big string first
     for url in RSS_FEEDS:
         feed = feedparser.parse(url)
-        st.subheader(f"📡 Source: {feed.feed.title}")
+        all_news_bundle += f"\n--- SOURCE: {feed.feed.title} ---\n"
         
-        # We loop through the top 3 articles from each source
         for entry in feed.entries[:3]:
-            with st.container():
-                st.markdown(f"### [{entry.title}]({entry.link})")
-                
-                # We wait 2 seconds to avoid the "Quota Exceeded" error
-                time.sleep(2)
-                
-                with st.spinner("Gemini is reading..."):
-                    # Use summary if available, otherwise use the title
-                    content = entry.summary if 'summary' in entry else entry.title
-                    summary_text = get_ai_summary(content)
-                    st.info(summary_text)
-                
-                st.divider()
+            content = entry.summary if 'summary' in entry else entry.title
+            all_news_bundle += f"TITLE: {entry.title}\nTEXT: {content}\n\n"
+            source_links.append({"title": entry.title, "link": entry.link})
+
+    # 2. Send ONE single request for everything
+    with st.spinner("Gemini is summarizing all news at once..."):
+        # We ask Gemini to keep the formatting clear
+        prompt = f"Summarize each of these AI news stories. For each story, give me the title followed by 2 bullet points. Keep it professional:\n\n{all_news_bundle}"
+        full_report = get_ai_summary(prompt)
+        
+        # Display the big report
+        st.markdown("## 📰 Latest AI Summary Report")
+        st.info(full_report)
+
+    # 3. List the clickable links at the bottom
+    st.divider()
+    st.subheader("🔗 Original Sources")
+    for item in source_links:
+        st.write(f"- [{item['title']}]({item['link']})")
 
 # Footer
 st.caption("Built with Streamlit and Google Gemini 2.0")
