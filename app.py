@@ -55,7 +55,7 @@ if st.button("Fetch Latest News"):
 
     # 2. Send ONE single request to Gemini for everything
     for entry in feed.entries[:4]:
-    with st.container():
+        with st.container():
         st.markdown(f"### [{entry.title}]({entry.link})")
 
         # This tiny pause prevents the "Quota Exceeded" error!
