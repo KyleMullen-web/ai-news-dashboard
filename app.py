@@ -12,7 +12,7 @@ RSS_FEEDS = [
 ]
 
 # Pulls your Google API Key from Streamlit Cloud Secrets
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "AIzaSyCG_sQD3s_sR9xwe3za0eaXdkHuD6qgSGs")
+GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "missing")
 
 @st.cache_data(ttl=3600)
 def get_ai_summary(text):
