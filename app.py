@@ -1,3 +1,4 @@
+import time
 import streamlit as st
 import feedparser
 import requests
@@ -55,6 +56,15 @@ if st.button("Fetch Latest News"):
             all_news_text += f"Title: {entry.title}\nContent: {entry.summary if 'summary' in entry else entry.title}\n---\n"
 
     # 2. Send ONE single request to Gemini for everything
+   for entry in feed.entries[:2]:
+    with st.container():
+        st.markdown(f"### [{entry.title}]({entry.link})")
+
+        # This tiny pause prevents the "Quota Exceeded" error!
+        time.sleep(2) 
+
+        with st.spinner("AI is generating summary..."):
+            # ... your existing summary code ...
     with st.spinner("AI is summarizing the entire feed..."):
         combined_summary = get_ai_summary(f"Here is a list of news. Provide a 2-bullet point summary for EACH individual story separately:\n\n{all_news_text}")
     
