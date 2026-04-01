@@ -54,7 +54,7 @@ if st.button("Fetch Latest News"):
             all_news_text += f"Title: {entry.title}\nContent: {entry.summary if 'summary' in entry else entry.title}\n---\n"
 
     # 2. Send ONE single request to Gemini for everything
-   for entry in feed.entries[:4]:
+    for entry in feed.entries[:4]:
     with st.container():
         st.markdown(f"### [{entry.title}]({entry.link})")
 
