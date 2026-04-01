@@ -44,9 +44,28 @@ st.title("🤖 Free AI News Dashboard")
 st.markdown("Gathering the latest AI updates and summarizing them using free open-source models.")
 
 if st.button("Fetch Latest News"):
+    all_news_text = ""
+    articles = []
+
+    # 1. Collect all titles first
     for url in RSS_FEEDS:
         feed = feedparser.parse(url)
-        st.subheader(f"📡 {feed.feed.title}")
+        for entry in feed.entries[:3]:
+            articles.append(entry)
+            all_news_text += f"Title: {entry.title}\nContent: {entry.summary if 'summary' in entry else entry.title}\n---\n"
+
+    # 2. Send ONE single request to Gemini for everything
+    with st.spinner("AI is summarizing the entire feed..."):
+        combined_summary = get_ai_summary(f"Here is a list of news. Provide a 2-bullet point summary for EACH individual story separately:\n\n{all_news_text}")
+    
+    # 3. Display the big summary
+    st.markdown("### 📰 Today's AI Briefing")
+    st.info(combined_summary)
+    
+    st.divider()
+    st.markdown("🔗 **Original Sources:**")
+    for art in articles:
+        st.write(f"- [{art.title}]({art.link})")
         
         # Grab the top 2 most recent articles from each source
         for entry in feed.entries[:2]:
